@@ -15,8 +15,8 @@
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Foto PIC</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kode</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipe</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kapasitas</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Penanggung Jawab</th>
@@ -28,18 +28,12 @@
                 @forelse($classrooms as $classroom)
                 <tr class="hover:bg-gray-50">
                     <td class="px-6 py-4 whitespace-nowrap">
-                        @if($classroom->pic_photo)
-                            <img src="{{ asset('storage/' . $classroom->pic_photo) }}" 
-                                 alt="{{ $classroom->pic_name }}"
-                                 class="w-12 h-12 rounded-full object-cover">
-                        @else
-                            <div class="w-12 h-12 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
-                                {{ substr($classroom->pic_name, 0, 2) }}
-                            </div>
-                        @endif
+                        <div class="text-sm font-semibold text-gray-900">{{ $classroom->name }}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm font-semibold text-gray-900">{{ $classroom->name }}</div>
+                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                            {{ $classroom->code }}
+                        </span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
@@ -51,8 +45,25 @@
                         {{ $classroom->capacity }} siswa
                     </td>
                     <td class="px-6 py-4">
-                        <div class="text-sm text-gray-900 font-medium">{{ $classroom->pic_name }}</div>
-                        <div class="text-sm text-gray-500">{{ $classroom->pic_id }}</div>
+                        @if($classroom->pic)
+                            <div class="flex items-center gap-3">
+                                @if($classroom->pic->photo)
+                                    <img src="{{ asset('storage/' . $classroom->pic->photo) }}" 
+                                         alt="{{ $classroom->pic->name }}"
+                                         class="w-10 h-10 rounded-full object-cover">
+                                @else
+                                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                        {{ substr($classroom->pic->name, 0, 2) }}
+                                    </div>
+                                @endif
+                                <div>
+                                    <div class="text-sm text-gray-900 font-medium">{{ $classroom->pic->name }}</div>
+                                    <div class="text-xs text-gray-500">{{ $classroom->pic->nip ?? $classroom->pic->email }}</div>
+                                </div>
+                            </div>
+                        @else
+                            <span class="text-sm text-gray-400">-</span>
+                        @endif
                     </td>
                     <td class="px-6 py-4">
                         <div class="text-sm text-gray-900 max-w-xs truncate">

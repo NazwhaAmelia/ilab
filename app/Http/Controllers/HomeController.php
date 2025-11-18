@@ -11,7 +11,7 @@ use Carbon\Carbon;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index($classroomId = null)
     {
         // Mapping hari dalam bahasa Indonesia
         $dayMapping = [
@@ -38,24 +38,40 @@ class HomeController extends Controller
         $today = $dayMapping[Carbon::now()->format('l')];
         $todayName = $dayNames[$today];
 
-        // Ambil jadwal hari ini, urutkan berdasarkan waktu
-        $todaySchedules = Schedule::with(['classroom', 'classModel', 'subject', 'teacher'])
-            ->where('day', $today)
-            ->orderBy('start_time')
-            ->get();
+        // Ambil semua ruangan untuk dropdown
+        $classrooms = Classroom::with('pic')->orderBy('type')->orderBy('name')->get();
 
-        // Cari jadwal yang sedang berlangsung
-        $now = Carbon::now()->format('H:i:s');
-        $currentSchedule = Schedule::with(['classroom', 'classModel', 'subject', 'teacher'])
-            ->where('day', $today)
-            ->whereTime('start_time', '<=', $now)
-            ->whereTime('end_time', '>', $now)
-            ->first();
+        // Tentukan ruangan yang dipilih (default: ruangan pertama)
+        $selectedClassroom = null;
+        if ($classroomId) {
+            $selectedClassroom = Classroom::with('pic')->find($classroomId);
+        }
+        if (! $selectedClassroom && $classrooms->count() > 0) {
+            $selectedClassroom = $classrooms->first();
+        }
 
-        // Ambil jadwal pertama hari ini untuk tampilan default
-        $firstSchedule = $todaySchedules->first();
+        // Ambil jadwal untuk ruangan yang dipilih hari ini
+        $todaySchedules = collect();
+        $currentSchedule = null;
 
-        return view('home', compact('todaySchedules', 'currentSchedule', 'firstSchedule', 'todayName'));
+        if ($selectedClassroom) {
+            $todaySchedules = Schedule::with(['classroom', 'classModel', 'subject', 'teacher'])
+                ->where('classroom_id', $selectedClassroom->id)
+                ->where('day', $today)
+                ->orderBy('start_time')
+                ->get();
+
+            // Cari jadwal yang sedang berlangsung
+            $now = Carbon::now()->format('H:i:s');
+            $currentSchedule = Schedule::with(['classroom', 'classModel', 'subject', 'teacher'])
+                ->where('classroom_id', $selectedClassroom->id)
+                ->where('day', $today)
+                ->whereTime('start_time', '<=', $now)
+                ->whereTime('end_time', '>', $now)
+                ->first();
+        }
+
+        return view('home', compact('todaySchedules', 'currentSchedule', 'todayName', 'classrooms', 'selectedClassroom'));
     }
 
     public function welcome()

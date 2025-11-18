@@ -27,6 +27,23 @@
                     @enderror
                 </div>
 
+                {{-- Kode Ruangan --}}
+                <div>
+                    <label for="code" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Kode Ruangan <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text"
+                           id="code"
+                           name="code"
+                           value="{{ old('code') }}"
+                           required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           placeholder="Contoh: LAB-1">
+                    @error('code')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 {{-- Tipe --}}
                 <div>
                     <label for="type" class="block text-sm font-semibold text-gray-700 mb-2">
@@ -63,60 +80,25 @@
                     @enderror
                 </div>
 
-                {{-- ID PIC --}}
-                <div>
+                {{-- Penanggung Jawab (Guru) --}}
+                <div class="md:col-span-2">
                     <label for="pic_id" class="block text-sm font-semibold text-gray-700 mb-2">
-                        ID Penanggung Jawab <span class="text-red-500">*</span>
+                        Penanggung Jawab (Guru) <span class="text-red-500">*</span>
                     </label>
-                    <input type="text"
-                           id="pic_id"
-                           name="pic_id"
-                           value="{{ old('pic_id') }}"
-                           required
-                           class="w-full px-4 py-2 border @error('pic_id') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                           placeholder="NIP/ID">
+                    <select id="pic_id"
+                            name="pic_id"
+                            required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">-- Pilih Guru Penanggung Jawab --</option>
+                        @foreach($teachers as $teacher)
+                            <option value="{{ $teacher->id }}" {{ old('pic_id') == $teacher->id ? 'selected' : '' }}>
+                                {{ $teacher->name }} - {{ $teacher->nip ?? $teacher->email }}
+                            </option>
+                        @endforeach
+                    </select>
                     @error('pic_id')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
-                </div>
-
-                {{-- Nama PIC --}}
-                <div>
-                    <label for="pic_name" class="block text-sm font-semibold text-gray-700 mb-2">
-                        Nama Penanggung Jawab <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text"
-                           id="pic_name"
-                           name="pic_name"
-                           value="{{ old('pic_name') }}"
-                           required
-                           class="w-full px-4 py-2 border @error('pic_name') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                           placeholder="Nama Lengkap">
-                    @error('pic_name')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Foto PIC --}}
-                <div class="md:col-span-2">
-                    <label for="pic_photo" class="block text-sm font-semibold text-gray-700 mb-2">
-                        Foto Penanggung Jawab
-                    </label>
-                    <input type="file"
-                           id="pic_photo"
-                           name="pic_photo"
-                           accept="image/jpeg,image/jpg,image/png"
-                           class="w-full px-4 py-2 border @error('pic_photo') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                           onchange="previewImage(event)">
-                    <p class="mt-1 text-xs text-gray-500">Format: JPG, JPEG, PNG (Max: 2MB)</p>
-                    @error('pic_photo')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-
-                    {{-- Preview --}}
-                    <div id="preview" class="mt-3 hidden">
-                        <img id="preview-image" src="" alt="Preview" class="w-32 h-32 rounded-full object-cover">
-                    </div>
                 </div>
 
                 {{-- Deskripsi --}}
@@ -147,18 +129,4 @@
         </form>
     </div>
 </div>
-
-<script>
-function previewImage(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('preview-image').src = e.target.result;
-            document.getElementById('preview').classList.remove('hidden');
-        };
-        reader.readAsDataURL(file);
-    }
-}
-</script>
 @endsection

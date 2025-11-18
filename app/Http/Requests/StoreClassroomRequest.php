@@ -26,8 +26,7 @@ class StoreClassroomRequest extends FormRequest
             'code' => ['required', 'string', 'unique:classrooms,code', 'max:50'],
             'type' => ['required', 'in:lab,classroom'],
             'capacity' => ['nullable', 'integer', 'min:1'],
-            'pic_id' => ['nullable', 'exists:teachers,id'],
-            'pic_photo' => ['nullable', 'image', 'mimes:jpeg,jpg,png', 'max:2048'],
+            'pic_id' => ['required', 'exists:teachers,id'],
             'description' => ['nullable', 'string'],
         ];
     }
@@ -39,8 +38,8 @@ class StoreClassroomRequest extends FormRequest
             'code.required' => 'Kode ruangan wajib diisi',
             'code.unique' => 'Kode ruangan sudah digunakan',
             'type.required' => 'Tipe ruangan wajib dipilih',
-            'pic_photo.image' => 'File harus berupa gambar',
-            'pic_photo.max' => 'Ukuran foto maksimal 2MB',
+            'pic_id.required' => 'Penanggung jawab wajib dipilih',
+            'pic_id.exists' => 'Guru yang dipilih tidak valid',
         ];
     }
 }

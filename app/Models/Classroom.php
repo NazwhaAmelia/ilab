@@ -18,7 +18,6 @@ class Classroom extends Model
         'type',
         'capacity',
         'pic_id',
-        'pic_photo',
         'description',
     ];
 

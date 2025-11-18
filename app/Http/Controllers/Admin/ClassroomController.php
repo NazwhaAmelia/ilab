@@ -9,7 +9,6 @@ use App\Models\Classroom;
 use App\Models\Teacher;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Storage;
 
 class ClassroomController extends Controller
 {
@@ -29,13 +28,7 @@ class ClassroomController extends Controller
 
     public function store(StoreClassroomRequest $request): RedirectResponse
     {
-        $data = $request->validated();
-
-        if ($request->hasFile('pic_photo')) {
-            $data['pic_photo'] = $request->file('pic_photo')->store('classrooms', 'public');
-        }
-
-        Classroom::create($data);
+        Classroom::create($request->validated());
 
         return redirect()->route('admin.classrooms.index')
             ->with('success', 'Ruang kelas/lab berhasil ditambahkan!');
@@ -50,16 +43,7 @@ class ClassroomController extends Controller
 
     public function update(UpdateClassroomRequest $request, Classroom $classroom): RedirectResponse
     {
-        $data = $request->validated();
-
-        if ($request->hasFile('pic_photo')) {
-            if ($classroom->pic_photo) {
-                Storage::disk('public')->delete($classroom->pic_photo);
-            }
-            $data['pic_photo'] = $request->file('pic_photo')->store('classrooms', 'public');
-        }
-
-        $classroom->update($data);
+        $classroom->update($request->validated());
 
         return redirect()->route('admin.classrooms.index')
             ->with('success', 'Ruang kelas/lab berhasil diperbarui!');
@@ -67,10 +51,6 @@ class ClassroomController extends Controller
 
     public function destroy(Classroom $classroom): RedirectResponse
     {
-        if ($classroom->pic_photo) {
-            Storage::disk('public')->delete($classroom->pic_photo);
-        }
-
         $classroom->delete();
 
         return redirect()->route('admin.classrooms.index')
