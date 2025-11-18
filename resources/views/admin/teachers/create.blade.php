@@ -15,9 +15,9 @@
                     <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">
                         Nama Lengkap <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" 
-                           id="name" 
-                           name="name" 
+                    <input type="text"
+                           id="name"
+                           name="name"
                            value="{{ old('name') }}"
                            required
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('name') border-red-500 @enderror">
@@ -31,9 +31,9 @@
                     <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
                         Email <span class="text-red-500">*</span>
                     </label>
-                    <input type="email" 
-                           id="email" 
-                           name="email" 
+                    <input type="email"
+                           id="email"
+                           name="email"
                            value="{{ old('email') }}"
                            required
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('email') border-red-500 @enderror">
@@ -47,9 +47,9 @@
                     <label for="nip" class="block text-sm font-semibold text-gray-700 mb-2">
                         NIP
                     </label>
-                    <input type="text" 
-                           id="nip" 
-                           name="nip" 
+                    <input type="text"
+                           id="nip"
+                           name="nip"
                            value="{{ old('nip') }}"
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('nip') border-red-500 @enderror">
                     @error('nip')
@@ -62,9 +62,9 @@
                     <label for="phone" class="block text-sm font-semibold text-gray-700 mb-2">
                         Telepon
                     </label>
-                    <input type="text" 
-                           id="phone" 
-                           name="phone" 
+                    <input type="text"
+                           id="phone"
+                           name="phone"
                            value="{{ old('phone') }}"
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('phone') border-red-500 @enderror">
                     @error('phone')
@@ -77,9 +77,9 @@
                     <label for="photo" class="block text-sm font-semibold text-gray-700 mb-2">
                         Foto Guru
                     </label>
-                    <input type="file" 
-                           id="photo" 
-                           name="photo" 
+                    <input type="file"
+                           id="photo"
+                           name="photo"
                            accept="image/jpeg,image/jpg,image/png"
                            onchange="previewPhoto(this, 'photo-preview')"
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('photo') border-red-500 @enderror">
@@ -87,7 +87,7 @@
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                     <p class="mt-1 text-xs text-gray-500">Format: JPG, JPEG, PNG. Max: 2MB</p>
-                    
+
                     <img id="photo-preview" class="hidden mt-4 photo-preview rounded-lg border-2 border-gray-300">
                 </div>
 
@@ -96,8 +96,8 @@
                     <label for="bio" class="block text-sm font-semibold text-gray-700 mb-2">
                         Bio / Keterangan
                     </label>
-                    <textarea id="bio" 
-                              name="bio" 
+                    <textarea id="bio"
+                              name="bio"
                               rows="3"
                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('bio') border-red-500 @enderror">{{ old('bio') }}</textarea>
                     @error('bio')

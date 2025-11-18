@@ -29,8 +29,12 @@
                         <div class="text-sm font-semibold text-gray-900">{{ $class->name }}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">{{ $class->homeroomTeacher->name }}</div>
-                        <div class="text-xs text-gray-500">{{ $class->homeroomTeacher->email }}</div>
+                        @if($class->homeroomTeacher)
+                            <div class="text-sm text-gray-900">{{ $class->homeroomTeacher->name }}</div>
+                            <div class="text-xs text-gray-500">{{ $class->homeroomTeacher->email }}</div>
+                        @else
+                            <div class="text-sm text-gray-500 italic">Belum ada wali kelas</div>
+                        @endif
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
@@ -43,12 +47,12 @@
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <a href="{{ route('admin.classes.edit', $class) }}" 
+                        <a href="{{ route('admin.classes.edit', $class) }}"
                            class="text-blue-600 hover:text-blue-900 mr-3">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <form action="{{ route('admin.classes.destroy', $class) }}" 
-                              method="POST" 
+                        <form action="{{ route('admin.classes.destroy', $class) }}"
+                              method="POST"
                               class="inline"
                               onsubmit="return confirm('Yakin ingin menghapus kelas {{ $class->name }}?')">
                             @csrf
