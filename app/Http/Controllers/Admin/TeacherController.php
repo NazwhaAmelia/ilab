@@ -30,9 +30,47 @@ class TeacherController extends Controller
 
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
+            
             // Pastikan file benar-benar valid dan ada
-            if ($file && $file->isValid() && $file->getSize() > 0 && $file->getPathname() !== '' && file_exists($file->getPathname())) {
-                $data['photo'] = $file->store('teachers', 'public');
+            if ($file && $file->isValid() && $file->getSize() > 0) {
+                try {
+                    // Buat folder jika belum ada
+                    $storagePath = storage_path('app/public/teachers');
+                    if (!file_exists($storagePath)) {
+                        mkdir($storagePath, 0755, true);
+                    }
+                    
+                    // Generate nama file unik
+                    $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    
+                    // Simpan menggunakan move atau storeAs
+                    $path = $file->storeAs('teachers', $fileName, 'public');
+                    
+                    // Verifikasi file tersimpan
+                    $fullPath = storage_path('app/public/' . $path);
+                    if (file_exists($fullPath)) {
+                        $data['photo'] = $path;
+                        \Log::info('Photo uploaded successfully', [
+                            'path' => $path,
+                            'size' => filesize($fullPath)
+                        ]);
+                    } else {
+                        \Log::error('Photo upload failed - file not found after save', [
+                            'expected_path' => $fullPath
+                        ]);
+                    }
+                } catch (\Exception $e) {
+                    \Log::error('Photo upload exception: ' . $e->getMessage(), [
+                        'file' => $file->getClientOriginalName(),
+                        'size' => $file->getSize()
+                    ]);
+                }
+            } else {
+                \Log::warning('Invalid photo file', [
+                    'hasFile' => $request->hasFile('photo'),
+                    'isValid' => $file ? $file->isValid() : false,
+                    'size' => $file ? $file->getSize() : 0
+                ]);
             }
         }
 
@@ -56,11 +94,44 @@ class TeacherController extends Controller
     {
         $data = $request->validated();
 
-        if ($request->hasFile('photo') && $request->file('photo') !== null) {
-            if ($teacher->photo) {
-                Storage::disk('public')->delete($teacher->photo);
+        if ($request->hasFile('photo')) {
+            $file = $request->file('photo');
+            
+            if ($file && $file->isValid() && $file->getSize() > 0) {
+                try {
+                    // Hapus foto lama
+                    if ($teacher->photo) {
+                        Storage::disk('public')->delete($teacher->photo);
+                    }
+                    
+                    // Buat folder jika belum ada
+                    $storagePath = storage_path('app/public/teachers');
+                    if (!file_exists($storagePath)) {
+                        mkdir($storagePath, 0755, true);
+                    }
+                    
+                    // Generate nama file unik
+                    $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    
+                    // Simpan file
+                    $path = $file->storeAs('teachers', $fileName, 'public');
+                    
+                    // Verifikasi file tersimpan
+                    $fullPath = storage_path('app/public/' . $path);
+                    if (file_exists($fullPath)) {
+                        $data['photo'] = $path;
+                        \Log::info('Photo updated successfully', [
+                            'teacher_id' => $teacher->id,
+                            'path' => $path,
+                            'size' => filesize($fullPath)
+                        ]);
+                    } else {
+                        \Log::error('Photo update failed - file not found after save');
+                    }
+                } catch (\Exception $e) {
+                    \Log::error('Photo update exception: ' . $e->getMessage());
+                }
             }
-            $data['photo'] = $request->file('photo')->store('teachers', 'public');
         }
 
         $teacher->update($data);
