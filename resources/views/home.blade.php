@@ -32,7 +32,7 @@
 
     {{-- Full Screen Container --}}
     <div class="w-screen h-screen flex flex-col">
-        
+
         {{-- Header Bar --}}
         <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 flex items-center justify-between shadow-lg z-10">
             <div class="flex items-center gap-4">
@@ -52,7 +52,7 @@
                 </button>
                 <div id="dropdownMenu" class="dropdown-menu hidden absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-2xl overflow-hidden z-50 max-h-96 overflow-y-auto">
                     @foreach($classrooms as $classroom)
-                        <a href="{{ route('home.classroom', $classroom->id) }}" 
+                        <a href="{{ route('home.classroom', $classroom->id) }}"
                            class="block px-6 py-4 hover:bg-blue-50 transition-colors {{ $selectedClassroom && $selectedClassroom->id == $classroom->id ? 'bg-blue-100 border-l-4 border-blue-600' : '' }}">
                             <div class="flex items-center gap-3">
                                 <i class="fas fa-door-open text-gray-600"></i>
@@ -75,18 +75,18 @@
 
         @if($selectedClassroom)
             {{-- Main Content Area --}}
-            <div class="flex-1 flex overflow-hidden">
-                
+            <div class="flex-1 flex overflow-hidden min-h-0">
+
                 {{-- Left Side - Teacher Photo & Current Status --}}
-                <div class="w-2/5 p-6 flex flex-col gap-6 overflow-hidden">
-                    
+                <div class="w-2/5 p-6 flex flex-col gap-6 overflow-hidden min-h-0">
+
                     {{-- Teacher/PIC Photo Card (3/4 height) --}}
                     <div class="bg-white rounded-3xl shadow-xl overflow-hidden border-4 border-gray-300 flex-1 relative">
                         @php
                             $displayPhoto = null;
                             $displayName = '';
                             $displayRole = '';
-                            
+
                             if ($currentSchedule && $currentSchedule->teacher) {
                                 // Ada jadwal: tampilkan foto guru yang mengajar
                                 $displayPhoto = $currentSchedule->teacher->photo;
@@ -99,17 +99,17 @@
                                 $displayRole = 'Penanggung Jawab Ruangan';
                             }
                         @endphp
-                        
+
                         <div class="w-full h-full flex items-center justify-center {{ $displayPhoto ? 'bg-gray-100' : 'bg-gradient-to-br from-blue-100 to-purple-100' }}">
                             @if($displayPhoto)
-                                <img src="{{ asset('storage/' . $displayPhoto) }}" 
+                                <img src="{{ asset('storage/' . $displayPhoto) }}"
                                      alt="{{ $displayName }}"
                                      class="w-full h-full object-cover">
                             @else
                                 <i class="fas fa-user text-9xl text-gray-400"></i>
                             @endif
                         </div>
-                        
+
                         {{-- Overlay nama PIC di kiri bawah --}}
                         @if($displayName)
                             <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 backdrop-blur-sm p-4">
@@ -118,15 +118,15 @@
                             </div>
                         @endif
                     </div>
-                    
-                    {{-- Current Status Card (1/4 height) --}}
-                    <div class="bg-white rounded-3xl shadow-xl p-4 h-1/4 overflow-hidden flex flex-col">
+
+                    {{-- Current Status Card (fixed height to prevent overflow) --}}
+                    <div class="bg-white rounded-3xl shadow-xl p-4 flex-none h-48 overflow-hidden flex flex-col">
                         @if($currentSchedule)
                             <div class="flex items-center gap-2 mb-3">
                                 <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse shrink-0"></div>
                                 <h3 class="text-base font-bold text-gray-800 truncate">Sedang Berlangsung</h3>
                             </div>
-                            
+
                             <div class="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-4 border-l-4 border-green-500 flex-1 overflow-hidden">
                                 <h4 class="text-xl font-bold text-gray-800 mb-2 truncate">{{ $currentSchedule->subject->name }}</h4>
                                 <div class="space-y-1 text-gray-700 text-sm">
@@ -151,12 +151,12 @@
                                 </div>
                                 <h3 class="text-base font-semibold text-gray-600 mb-1 truncate">Tidak Ada Kegiatan</h3>
                                 <p class="text-xs text-gray-500 truncate">Tidak ada pelajaran saat ini</p>
-                                
+
                                 @php
                                     $now = now()->format('H:i:s');
                                     $nextSchedule = $todaySchedules->where('start_time', '>', $now)->first();
                                 @endphp
-                                
+
                                 @if($nextSchedule)
                                     <div class="mt-2 pt-2 border-t border-gray-200">
                                         <p class="text-xs text-gray-500 mb-1">Jadwal Berikutnya:</p>
@@ -170,7 +170,7 @@
                 </div>
 
                 {{-- Right Side - Schedule List --}}
-                <div class="flex-1 p-6 overflow-hidden">
+                <div class="flex-1 p-6 overflow-hidden min-h-0">
                     <div class="bg-white rounded-3xl shadow-xl h-full overflow-hidden flex flex-col">
                         <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-5 shrink-0">
                             <h3 class="text-xl font-bold mb-1 truncate">Jadwal Hari Ini - {{ $todayName }}</h3>
@@ -187,14 +187,14 @@
                                             $now = now()->format('H:i:s');
                                             $startTime = \Carbon\Carbon::parse($schedule->start_time)->format('H:i:s');
                                             $endTime = \Carbon\Carbon::parse($schedule->end_time)->format('H:i:s');
-                                            
+
                                             if ($now >= $startTime && $now < $endTime) {
                                                 $isActive = true;
                                             } elseif ($now >= $endTime) {
                                                 $isPast = true;
                                             }
                                         @endphp
-                                        
+
                                         <div class="rounded-xl p-4 border-2 transition-all duration-300 {{ $isActive ? 'bg-gradient-to-r from-green-500 to-green-600 text-white border-green-600 shadow-lg' : ($isPast ? 'bg-gray-50 border-gray-200 opacity-60' : 'bg-white border-blue-200 hover:border-blue-400 hover:shadow-md') }}">
                                             <div class="flex items-center justify-between mb-2 gap-2">
                                                 <h4 class="text-lg font-bold {{ $isActive ? 'text-white' : 'text-gray-800' }} truncate flex-1">
@@ -215,7 +215,7 @@
                                                     </span>
                                                 @endif
                                             </div>
-                                            
+
                                             <div class="grid grid-cols-2 gap-2 text-sm">
                                                 <div class="flex items-center gap-2 {{ $isActive ? 'text-white' : 'text-gray-600' }} truncate">
                                                     <i class="fas fa-clock w-4 shrink-0"></i>
@@ -267,13 +267,13 @@
         // Dropdown toggle dengan click
         const dropdownButton = document.getElementById('dropdownButton');
         const dropdownMenu = document.getElementById('dropdownMenu');
-        
+
         if (dropdownButton && dropdownMenu) {
             dropdownButton.addEventListener('click', function(e) {
                 e.stopPropagation();
                 dropdownMenu.classList.toggle('show');
             });
-            
+
             // Close dropdown when clicking outside
             document.addEventListener('click', function(e) {
                 if (!dropdownButton.contains(e.target) && !dropdownMenu.contains(e.target)) {
@@ -281,7 +281,7 @@
                 }
             });
         }
-        
+
         // Update jam real-time
         function updateClock() {
             const now = new Date();
@@ -290,9 +290,9 @@
             const seconds = String(now.getSeconds()).padStart(2, '0');
             document.getElementById('current-time').textContent = `${hours}:${minutes}:${seconds}`;
         }
-        
+
         setInterval(updateClock, 1000);
-        
+
         // Auto refresh setiap 2 menit untuk update jadwal
         setTimeout(() => {
             location.reload();
